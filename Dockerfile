@@ -1,6 +1,7 @@
 FROM alpine:3.5
 
-MAINTAINER Yan Chan
+#File Author / Maintainer
+MAINTAINER Troy Kelly
 
 RUN apk update && \
     apk add --no-cache git && \
@@ -15,21 +16,25 @@ RUN apk update && \
     pip install -U pip && \
     rm -rf /var/cache/apk/*
 
+# Install Virtualenv
 RUN pip install virtualenv
 
-RUN git clone https://github.com/ngoduykhanh/PowerDNS-Admin.git /src
+# Create a new directory where the virtual environment will be created and add the requirements file.
+RUN git clone https://github.com/ngoduykhanh/PowerDNS-Admin.git /app
 
-WORKDIR /src
+WORKDIR /app
 
 RUN virtualenv flask && \
   source ./flask/bin/activate && \
   pip install MySQL-python && \
   pip install -r requirements.txt && \
   cp config_template.py config.py && \
-  sed -i "s|LOG_FILE = 'logfile.log'|LOG_FILE = ''|g" /src/config.py; \
-  sed -i "s|PDNS_VERSION = '3.4.7'|PDNS_VERSION = '4.0.4'|g" /src/config.py
+  sed -i "s|LOG_FILE = 'logfile.log'|LOG_FILE = ''|g" /app/config.py; \
+  sed -i "s|PDNS_VERSION = '3.4.7'|PDNS_VERSION = '4.0.4'|g" /app/config.py; \
+  sed -i "s|PRETTY_IPV6_PTR = False|PRETTY_IPV6_PTR = True|g" /app/config.py
 
 EXPOSE 9393
 
 COPY docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
+ENTRYPOINT ["docker-entrypoint.sh"]
