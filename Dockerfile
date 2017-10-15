@@ -27,10 +27,9 @@ RUN virtualenv flask && \
   pip install -r requirements.txt && \
   cp config_template.py config.py && \
   sed -i "s|LOG_FILE = 'logfile.log'|LOG_FILE = ''|g" /src/config.py; \
-  sed -i "s|PDNS_VERSION = '3.4.7'|PDNS_VERSION = '4.0.4'|g" /src/config.py;
+  sed -i "s|PDNS_VERSION = '3.4.7'|PDNS_VERSION = '4.0.4'|g" /src/config.py
 
 EXPOSE 9393
 
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN ln -s usr/local/bin/docker-entrypoint.sh /
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
