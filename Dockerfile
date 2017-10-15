@@ -1,5 +1,3 @@
-Dockerfile
-root@VM-1-8-debian:/data/padmin# cat Dockerfile
 FROM alpine:3.5
 
 MAINTAINER Yan Chan
